@@ -1,30 +1,70 @@
 const digitAsWord = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-const numberTemplate = [0, 0, 0, 0, 0, 0];
+const firstTen = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen'];
+const nextTens = {
+    0: 'zero',
+    2: 'twen',
+    3: 'thir',
+    4: 'for',
+    5: 'fif',
+    8: 'eigh',
+};
 
-function printWordFromDigit (digit) {
-    console.log(digitAsWord[digit]);
-}
-
-function iterateNumber (numAsArray) {
-    for (let digit in numAsArray) {
-        printWordFromDigit(numAsArray[digit]);
+function makeHundredString(numAsArray) {
+    let numAsWord = digitAsWord[numAsArray[0]] + ' hundred ';
+    if (numAsArray[1] === 1) {
+        if (numAsArray[2] <= 5 || numAsArray[2] === 8) {
+            return numAsWord += firstTen[numAsArray[2]]
+        } else {
+            numAsWord += digitAsWord[numAsArray[2]] + 'teen ';
+        }
+        return numAsWord;
+    } else {
+        let suffix = numAsArray[2] === 0 ? 'ty ' : 'ty-';
+        if (numAsArray[1] <= 5 || numAsArray[1] === 8) {
+            numAsWord += nextTens[numAsArray[1]] + suffix;
+        } else {
+            numAsWord += digitAsWord[numAsArray[1]] + suffix;
+        }
     }
+    numAsWord += digitAsWord[numAsArray[2]];
+
+    return numAsWord;
 }
 
-function number2words(n){
-    let position = numberTemplate.length - 1;
+function makeDigitsArray(num) {
+    const digitsArray = [0, 0, 0, 0, 0, 0];
+    let position = digitsArray.length - 1;
 
-    while (n) {    
-        let digit = n % 10;
-        numberTemplate[position] = digit;
-        n = Math.floor(n / 10);
+    while (num) {
+        let digit = num % 10;
+        digitsArray[position] = digit;
+        num = Math.floor(num / 10);
         --position;
     }
+    return [digitsArray.slice(0, 3), digitsArray.slice(3)];
 }
 
-number2words(183456);
-console.log(numberTemplate);
-iterateNumber(numberTemplate);
+function removeRedundant(numAsWord) {
+    return numAsWord.replace(/(zero hundred)|(zeroty-)|(zero)|( zeroty-)|( zeroty)/g, ' ').trim();
+}
+
+function number2words(n) {
+    let numberAsArray = makeDigitsArray(n);
+    let res = '';
+    if (n < 10) return digitAsWord[n];
+
+    if (n < 1000) {
+        res = removeRedundant(makeHundredString(numberAsArray[1]));
+    } else {
+        res = (removeRedundant(makeHundredString(numberAsArray[0]))
+            + ' thousand '
+            + removeRedundant(makeHundredString(numberAsArray[1])))
+            .trim();
+    }
+    return res;
+}
+
+console.log(number2words(301));
 
 /*'zero',
 'one',
