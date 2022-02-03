@@ -29,9 +29,6 @@ function multiply(a, b) {
         for (let j = max.length - 1; j >= 0; j--) {
             let y = (max[j]) || 0;
 
-            // let prod = `${x * y + digMem}`;
-            // let digPut = parseInt(prod[1]) || 0;
-            // digMem = parseInt(prod[0]);
             let prod = x * y + digMem;
             let digPut = splitNum(prod)[1] || 0;
             digMem = splitNum(prod)[0];
@@ -40,15 +37,20 @@ function multiply(a, b) {
                 digPut = prod;
                 digMem = 0;
             }
+
             digPut += res[resCounter];
             res[resCounter] = digPut;
+
             if(digPut >= 10) {
                 //leave last digit
                 res[resCounter] = splitNum(digPut)[1];
+                
                 //first digit add to digMem
                 digMem += splitNum(digPut)[0];
             }
-            resCounter--;
+
+            resCounter--; //switch to next digit
+
             if (j === 0) {
                 res[resCounter] += digMem;
             }
